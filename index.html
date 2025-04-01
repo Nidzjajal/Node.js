@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>MCQ Quiz App</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 2em; }
+    .question { margin-bottom: 1.5em; }
+    .options { list-style-type: none; padding: 0; }
+    .options li { margin-bottom: 0.5em; }
+    .score-page { display: none; text-align: center; }
+  </style>
+</head>
+<body>
+  <h1>MCQ Quiz</h1>
+  <div id="quiz-page">
+    <h2>Select a Topic</h2>
+    <select id="topic-select">
+      <option value="science">Science</option>
+      <option value="math">Math</option>
+    </select>
+    <button onclick="startQuiz()">Start Quiz</button>
+    <div id="questions"></div>
+    <button id="submit-button" style="display:none;" onclick="submitQuiz()">Submit</button>
+  </div>
+  <div id="score-page">
+    <h2>Your Score</h2>
+    <p id="score"></p>
+    <button onclick="location.reload()">Restart</button>
+  </div>
+  <script>
+    let selectedTopic;
+    let userAnswers = [];
+
+    async function startQuiz() {
+	
+      selectedTopic = document.getElementById('topic-select').value;
+      const response = await fetch(`http://localhost:9090/questions/${selectedTopic}`);
+      const questions = await response.json();
+      const questionsDiv = document.getElementById('questions');
+      questionsDiv.innerHTML = '';
+	
+      questions.forEach((q, i) => {
+        const questionDiv = document.createElement('div');
+        questionDiv.className = 'question';
+        questionDiv.innerHTML = `<p>${q.question}</p>`;
+        const optionsList = document.createElement('ul');
+        optionsList.className = 'options';
+        q.options.forEach((opt, idx) => {
+          const optionItem = document.createElement('li');
+          optionItem.innerHTML = `<label>
+            <input type="radio" name="question${i}" value="${idx}" onclick="selectAnswer(${i}, ${idx})">
+            ${opt}
+          </label>`;
+          optionsList.appendChild(optionItem);
+        });
+        questionDiv.appendChild(optionsList);
+        questionsDiv.appendChild(questionDiv);
+      });
+
+      document.getElementById('submit-button').style.display = 'block';
+    }
+
+    function selectAnswer(questionIndex, optionIndex) {
+      userAnswers[questionIndex] = optionIndex;
+    }
+
+    async function submitQuiz() {
+      const response = await fetch('/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ topic: selectedTopic, answers: userAnswers })
+      });
+      const result = await response.json();
+      document.getElementById('quiz-page').style.display = 'none';
+      document.getElementById('score-page').style.display = 'block';
+      document.getElementById('score').textContent = `You scored: ${result.score}`;
+    }
+  </script>
+</body>
