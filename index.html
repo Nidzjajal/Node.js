@@ -36,7 +36,7 @@
     async function startQuiz() {
 	
       selectedTopic = document.getElementById('topic-select').value;
-      const response = await fetch('http://localhost:9090/questions/science');
+      const response = await fetch(`http://localhost:9090/questions/${selectedTopic}`);
       const questions = await response.json();
       const questionsDiv = document.getElementById('questions');
       questionsDiv.innerHTML = '';
