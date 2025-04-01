@@ -1,0 +1,24 @@
+{
+  "science": [
+    {
+      "id": 1,
+      "question": "What is the boiling point of water?",
+      "options": ["90°C", "100°C", "110°C", "120°C"],
+      "answer": 1
+    },
+    {
+      "id": 2,
+      "question": "What planet is known as the Red Planet?",
+      "options": ["Mars", "Venus", "Jupiter", "Saturn"],
+      "answer": 0
+    }
+  ],
+  "math": [
+    {
+      "id": 1,
+      "question": "What is 2+2?",
+      "options": ["3", "4", "5", "6"],
+      "answer": 1
+    }
+  ]
+}
